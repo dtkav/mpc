@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<head>
+<link href="css.css" type="text/css" rel="stylesheet" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+	socket = io.connect();
+	socket.on('message', function(msg) {
+		console.log(msg);
+		$(tty).append(msg);
+	});	
+
+</script>
+
+
+
+</head>
+<body>
+	<div id="container">
+		<textarea id="tty" rows="30" cols="44"></textarea>
+		<div id="skew">
+		</div>
+	</div>
+	<div id="mailbox">
+		<ul id="mail"></ul>
+	</div>
+	<audio src="http://cdn.knowmadsmusic.com/MusicMyLove.mp3"></audio>
+</body>
+</html>
