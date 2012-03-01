@@ -25,7 +25,7 @@ server = http.createServer(function(req, res){
 
 tty.on("data", function (data) {
 	if(friend != undefined) {
-		friend.volatile.emit('message', data);
+		friend.volatile.emit('message', data.replace(/\u0000/g, ''));
 	}
 });
 
@@ -41,6 +41,11 @@ var friend;
 io.sockets.on('connection', function (socket) {
 	socket.volatile.emit('message', sdata);
 	friend = socket;
+
+	socket.on('message', function (data) {
+		console.log(data);
+		tty.write(data);
+	});
 
 	socket.on('disconnect', function () {
 	

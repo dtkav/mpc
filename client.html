@@ -1,6 +1,5 @@
 <!DOCTYPE HTML>
 <head>
-<link href="css.css" type="text/css" rel="stylesheet" />
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 
@@ -32,7 +31,7 @@ body {margin:0;padding:0; background:#000;}
 <body>
 	<div id="container">
 		<div id="right">
-			<textarea id="tty" rows="30" cols="44"></textarea>
+			<textarea id="tty" rows="30" cols="44" disabled="disabled"></textarea>
 			<form id="sendtxt">
 				<input id="cmd" />
 				<input type="submit" value="send" />
@@ -53,18 +52,26 @@ body {margin:0;padding:0; background:#000;}
 	
 	
 <script>
+	var socket;
 	try {
 		socket = io.connect();
 		socket.on('message', function(msg) {
+			msg = msg.replace(/\u0000/g, '');
 			console.log(msg);
 			$(tty).append(msg);
+			$(tty)[0].scrollTop = $(tty)[0].scrollHeight;
 		});	
 	} catch(err) {
 		console.log("no io :(");
 	}
 	$(sendtxt).submit(function(e) {
-		$(tty).append($(cmd)[0].value);
+		e.preventDefault();
+		command = $(cmd)[0].value;
+		$(tty).append(command);
+		$(tty)[0].scrollTop = $(tty)[0].scrollHeight;
 		$(cmd)[0].value = "";
+		socket.send(command + "\n");
+
 		return false; // prevent bubble
 	});
 	
@@ -115,7 +122,6 @@ body {margin:0;padding:0; background:#000;}
 		}
 		ctx.fillRect((i%8)*70,Math.floor(i/8)*70,60,60);
 	}
-	
 	
 </script>
 </body>
