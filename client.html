@@ -3,21 +3,46 @@
 <link href="css.css" type="text/css" rel="stylesheet" />
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
-<script>
-	socket = io.connect();
-	socket.on('message', function(msg) {
-		console.log(msg);
-		$(tty).append(msg);
-	});	
 
-</script>
 
+
+<style>
+body {margin:0;padding:0; background:#000;}
+
+#right {
+	float:right;
+	background: #EEE;
+	padding: 5px;
+}
+
+#main {
+	text-align: center;
+	padding: 50px;
+}
+
+#canvas {
+	margin-left: auto;
+	margin-right: auto;
+	
+}
+</style>
 
 
 </head>
 <body>
 	<div id="container">
-		<textarea id="tty" rows="30" cols="44"></textarea>
+		<div id="right">
+			<textarea id="tty" rows="30" cols="44"></textarea>
+			<form id="sendtxt">
+				<input id="cmd" />
+				<input type="submit" value="send" />
+			</form>
+		</div>
+		<div id="main">
+			<div id="waveform"></div>
+			<canvas id="canvas" width="700" height="400">there should be a canvas here...</canvas>
+		</div>
+
 		<div id="skew">
 		</div>
 	</div>
@@ -25,5 +50,73 @@
 		<ul id="mail"></ul>
 	</div>
 	<audio src="http://cdn.knowmadsmusic.com/MusicMyLove.mp3"></audio>
+	
+	
+<script>
+	try {
+		socket = io.connect();
+		socket.on('message', function(msg) {
+			console.log(msg);
+			$(tty).append(msg);
+		});	
+	} catch(err) {
+		console.log("no io :(");
+	}
+	$(sendtxt).submit(function(e) {
+		$(tty).append($(cmd)[0].value);
+		$(cmd)[0].value = "";
+		return false; // prevent bubble
+	});
+	
+	var ctx = canvas.getContext("2d");
+	ctx.fillStyle="#CCCCCC";
+
+	for(i = 0; i < 32; i++) {
+		ctx.fillRect((i%8)*70+2,Math.floor(i/8)*70+2,60,60);
+	}
+
+	for(i = 0; i < 32; i++) {
+		switch(i%8){
+			case 0: 
+				var grad = ctx.createRadialGradient((i%8)*70+30, Math.floor(i/8)*70+30, 5, (i%8)*70+30, Math.floor(i/8)*70+30, 70);
+				grad.addColorStop(0, "#FFFF99"); // light yellow
+				grad.addColorStop(1, "#EEEE00"); // dark yellow
+				
+				ctx.fillStyle= grad;
+				break;
+			case 1:
+				var grad = ctx.createRadialGradient((i%8)*70+30, Math.floor(i/8)*70+30, 5, (i%8)*70+30, Math.floor(i/8)*70+30, 70);
+				grad.addColorStop(0, "#FFFF99"); // light yellow
+				grad.addColorStop(1, "#EEEE00"); // dark yellow
+				
+				ctx.fillStyle= grad;
+				break;
+			case 6:
+				var grad = ctx.createRadialGradient((i%8)*70+30, Math.floor(i/8)*70+30, 5, (i%8)*70+30, Math.floor(i/8)*70+30, 70);
+				grad.addColorStop(0, "#FF0099"); // light red
+				grad.addColorStop(1, "#FF0000"); // dark red
+				
+				ctx.fillStyle= grad;
+				break;
+			case 7: 
+				var grad = ctx.createRadialGradient((i%8)*70+30, Math.floor(i/8)*70+30, 5, (i%8)*70+30, Math.floor(i/8)*70+30, 70);
+				grad.addColorStop(0, "#D6FF8E"); // light blue
+				grad.addColorStop(1, "#4CB300"); // dark blue
+
+				ctx.fillStyle= grad;
+				break;
+			default:
+				var grad = ctx.createRadialGradient((i%8)*70+30, Math.floor(i/8)*70+30, 5, (i%8)*70+30, Math.floor(i/8)*70+30, 70);
+				grad.addColorStop(0, "#5EA6FF"); // light blue
+				grad.addColorStop(1, "#004CB3"); // dark blue
+			
+				ctx.fillStyle= grad;
+				break;
+		}
+		ctx.fillRect((i%8)*70,Math.floor(i/8)*70,60,60);
+	}
+	
+	
+</script>
 </body>
 </html>
